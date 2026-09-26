@@ -510,6 +510,26 @@
 
     <!-- JAVASCRIPT APP LOGIC -->
 <script>
+// INITIALIZE FIREBASE
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const database = firebase.database();
+
+// HELPER FUNCTION TO PUSH DATA TO FIREBASE
+function saveAttendanceToFirebase(studentId, studentName, status) {
+  database.ref('attendance/' + studentId).set({
+    name: studentName,
+    status: status,
+    timestamp: new Date().toISOString()
+  })
+  .then(() => {
+    console.log("Attendance successfully written to Firebase!");
+  })
+  .catch((error) => {
+    console.error("Firebase write error:", error);
+  });
+}
     // FIREBASE CONFIGURATION
     const firebaseConfig = {
         apiKey: "AIzaSyAhDcFIravdq6ugaCTTNrS9GG4JZZlAwpE",
