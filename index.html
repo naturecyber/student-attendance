@@ -341,38 +341,39 @@
     // ------------------------------------------------------------------
     // 3. AUTHENTICATION & ROLE MANAGEMENT
     // ------------------------------------------------------------------
-    auth.onAuthStateChanged(user => {
-      currentUser = user;
-      const logoutBtn = document.getElementById("nav-logout");
-      if (user) {
-        if (!user.email.endsWith("@gmail.com")) {
-          alert("Access Restricted: Gmail accounts only!");
-          auth.signOut();
-          return;
-        }
-        logoutBtn.classList.remove("hidden");
-      } else {
-        logoutBtn.classList.add("hidden");
-      }
-    });
+ // ------------------------------------------------------------------
+// 3. AUTHENTICATION & ROLE MANAGEMENT
+// ------------------------------------------------------------------
+let currentUser = null;
 
-    function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById("auth-email").value;
-      const pass = document.getElementById("auth-password").value;
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById("auth-email").value.trim();
+  const pass = document.getElementById("auth-password").value.trim();
+  const logoutBtn = document.getElementById("nav-logout");
 
-      auth.signInWithEmailAndPassword(email, pass)
-        .then(() => {
-          alert("Login successful!");
-          switchTab(email === PRIMARY_ADMIN_EMAIL ? "admin" : "teacher");
-        })
-        .catch(err => alert("Authentication failed: " + err.message));
-    }
+  if (email === "naturecyber4@gmail.com" && pass === "admin123") {
+    currentUser = { email: email, role: "admin" };
+    if (logoutBtn) logoutBtn.classList.remove("hidden");
+    alert("Logged in as Admin successfully!");
+    switchTab("admin");
+  } else if (pass === "teacher123") {
+    currentUser = { email: email || "teacher@tessy.com", role: "teacher" };
+    if (logoutBtn) logoutBtn.classList.remove("hidden");
+    alert("Logged in as Teacher successfully!");
+    switchTab("teacher");
+  } else {
+    alert("Authentication failed: Invalid email or password.");
+  }
+}
 
-    function handleLogout() {
-      auth.signOut().then(() => switchTab("kiosk"));
-    }
-
+function handleLogout() {
+  currentUser = null;
+  const logoutBtn = document.getElementById("nav-logout");
+  if (logoutBtn) logoutBtn.classList.add("hidden");
+  switchTab("kiosk");
+}
+  
     // ------------------------------------------------------------------
     // 4. CLOUDINARY DIRECT IMAGE UPLOAD
     // ------------------------------------------------------------------
